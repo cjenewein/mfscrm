@@ -57,10 +57,12 @@
                     </div>
                 </div>
             </div>
+            {% if user.is_authenticated %}
             <div class="page-container">
                     <p><a	href="{% url 'crm:edit' %}">Edit your profile.</a></p>
                     <p><a	href="{% url 'password_change' %}">Change your password.</a></p>
             </div>
+            {% endif %}
     </body>
     </html>
 {% endblock %}
