@@ -4,7 +4,7 @@ from .models import Customer, Service, Product, Profile
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-				list_display = ['user',	'date_of_birth',	'photo']
+				list_display = ['user',	'date_of_birth', 'photo']
 
 class CustomerList(admin.ModelAdmin):
     list_display = ( 'cust_name', 'organization', 'phone_number' )
