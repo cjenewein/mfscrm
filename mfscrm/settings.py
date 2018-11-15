@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,8 +82,12 @@ WSGI_APPLICATION = 'mfscrm.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd1r385qdobrtdh',
+        'USER': 'nyhjeoqjbytkcc',
+        'PASSWORD': 'cb09f1e45664e5383bdac1a57df25986a9ac7f3839dd92f9f94249f4c7362e2c',
+        'HOST': 'ec2-54-83-50-145.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
@@ -122,7 +128,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
+)
+
+# Update database configuration with $DATABASE_URL.
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+DATABASES['default'] = dj_database_url.config()
+
+# Simplified static file serving.
+# http://whitenoise.evans.io/en/stable/changelog.html#v04-0
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -133,13 +156,14 @@ LOGIN_REDIRECT_URL = '/home'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
-#EMAIL_BACKEND	=	'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_HOST	=	'smtp.gmail.com'
-EMAIL_HOST_USER = 'cj.smtp.server@gmail.com'
-EMAIL_HOST_PASSWORD	= 'server5.3.'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '83bf66d83defd5'
+EMAIL_HOST_PASSWORD = '558fbbae5eb939'
+EMAIL_PORT = 2525
+#EMAIL_USE_TLS = True
 
 
 from django.contrib.messages import constants as messages
@@ -157,3 +181,8 @@ AUTHENTICATION_BACKENDS = [
     'crm.authentication.EmailAuthBackend',
 ]
 
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
